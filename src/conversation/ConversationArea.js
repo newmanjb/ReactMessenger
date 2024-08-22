@@ -1,6 +1,6 @@
-import OutputArea from "./OutputArea";
+import OutputArea from "./output/OutputArea";
 import {useState} from "react";
-import InputArea from "./InputArea";
+import InputArea from "./input/InputArea";
 
 export default function ConversationArea({conversation:conversationDetails}) {
 
@@ -16,12 +16,12 @@ export default function ConversationArea({conversation:conversationDetails}) {
     }
 
     return (
-        <div>
-            <div>
-                <InputArea conversation={conversationDetails} onSend={onSend}/>
-            </div>
+        <div className="conversation-container">
             <div>
                 <OutputArea outputText={conversationDetails.history}/>
+            </div>
+            <div>
+                <InputArea conversation={conversationDetails} onSend={onSend}/>
             </div>
         </div>
     );

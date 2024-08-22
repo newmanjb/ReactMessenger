@@ -1,0 +1,43 @@
+.messenger-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: left;
+    padding-top: 70px;
+    padding-left: 50px;
+}
+
+.contacts-list {
+    display: flex;
+    flex-flow: column nowrap;
+    padding-right: 5px;
+}
+
+.contacts-button {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.conversation-container {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.conversation-history-text-area {
+    width: 1115px;
+    height: 600px;
+}
+
+.conversation-input-container {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: right;
+}
+
+.conversation-input-field {
+    width: 1115px;
+    height: 150px;
+}
+
+.send-button-container {
+    padding-top: 5px;
+}

@@ -1,6 +1,7 @@
 import {useState} from "react";
-import ConversationArea from "./ConversationArea";
-import ContactsArea from "./ContactsArea";
+import ConversationArea from "../conversation/ConversationArea";
+import ContactsArea from "../contacts_list/ContactsArea";
+import '../index.css';
 
 
 export default function Messenger() {
@@ -14,14 +15,14 @@ export default function Messenger() {
 
     let selectedData = defaultData[currentConversationIndex];
     return (
-        <>
-            <section>
+        <div className="messenger-container">
+            <>
                 <ContactsArea contacts={contacts} onSelectedContactChange={onContactSelected}/>
-            </section>
-            <section>
+            </>
+            <>
                 <ConversationArea key={selectedData.contact.id} conversation={selectedData.conversation}/>
-            </section>
-        </>
+            </>
+        </div>
     );
 }
 

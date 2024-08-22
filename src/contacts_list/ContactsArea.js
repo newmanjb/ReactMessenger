@@ -3,19 +3,18 @@ export default function ContactsArea({contacts:contactsList, onSelectedContactCh
     let contactRows = [];
     for(let i = 0; i < contactsList.length; i++) {
         let contact = contactsList[i];
-        contactRows.push(<li key={contact.id}>
-            <button onClick={() => {
+        contactRows.push(
+            <button className="contacts-button" onClick={() => {
                 onSelectedContactChangeFunction(i)
-            }}>{contact.firstname + " " + contact.lastname}</button>
-        </li>);
+            }}>{contact.firstname + " " + contact.lastname}</button>);
     }
 
     return (
-        <ul>
+        <div className="contacts-list">
             {
                 contactRows
             }
-        </ul>
+        </div>
     );
 }
 
