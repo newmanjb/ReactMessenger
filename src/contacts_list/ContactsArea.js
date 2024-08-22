@@ -5,6 +5,7 @@ export default function ContactsArea({contacts:contactsList, onSelectedContactCh
     const [showingContextMenu, setShowingContextMenu] = useState(false);
     const [contextMenuLocation, setContextMenuLocation] = useState({x:0,y:0});
 
+    //Adds a window listener that removes the context menu on left-click.  The effect is only run once as it has an empty dependency array.
     useEffect(() => {
         const removeContextMenu = () => {setShowingContextMenu(false)}
         window.addEventListener("click", removeContextMenu);
@@ -21,7 +22,9 @@ export default function ContactsArea({contacts:contactsList, onSelectedContactCh
                     onSelectedContactChangeFunction(i)
                 }}
                 onContextMenu={(e) => {
+                    //Stop the default context menu (from browser) from appearing
                     e.preventDefault();
+                    //Gather the information that's used when rendering the menu
                     setContextMenuLocation({x: e.pageX, y: e.pageY, contact : contact});
                     setShowingContextMenu(true);
                 }}>
@@ -38,6 +41,7 @@ export default function ContactsArea({contacts:contactsList, onSelectedContactCh
                 contactRows
             }
             {
+                //conditional rendering
                 showingContextMenu &&
                 (
                     <div className="contacts-context-menu"
