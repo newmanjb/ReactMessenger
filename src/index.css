@@ -57,3 +57,9 @@
 .send-button-container {
     padding-top: 5px;
 }
+
+.empty-conversation-area {
+    width: 1115px;
+    height: 150px;
+    border: black solid 1px;
+}
