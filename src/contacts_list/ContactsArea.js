@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-export default function ContactsArea({contacts, onContactSelected, onContactRemoved}) {
+export default function ContactsArea({contacts, onContactSelected, onContactRemoveSelected, onContactAddSelected, onContactEditSelected}) {
 
     const [showingContextMenu, setShowingContextMenu] = useState(false);
     const [contextMenuInformation, setContextMenuInformation] = useState({x:0,y:0});
@@ -18,6 +18,8 @@ export default function ContactsArea({contacts, onContactSelected, onContactRemo
         contactRows.push(
 
             <button className="contacts-button"
+
+                key={i}
                 onClick={() => {
                     onContactSelected(i)
                 }}
@@ -29,7 +31,7 @@ export default function ContactsArea({contacts, onContactSelected, onContactRemo
                     setShowingContextMenu(true);
                 }}>
                 {
-                    contact.firstname + " " + contact.lastname
+                    contact.firstName + " " + contact.lastName
                 }
             </button>);
     }
@@ -46,14 +48,14 @@ export default function ContactsArea({contacts, onContactSelected, onContactRemo
                 (
                     <div className="contacts-context-menu"
                          style={{top: contextMenuInformation.y, left: contextMenuInformation.x}}>
-                        <div className="contacts-context-menu-item" onClick={e => console.log("bollards")}>
+                        <div className="contacts-context-menu-item" onClick={e => onContactAddSelected()}>
                             Add New Contact
                         </div>
-                        <div className="contacts-context-menu-item" onClick={e => console.log("bollards")}>
-                            Edit Contact {contextMenuInformation.contact.firstname + " " + contextMenuInformation.contact.lastname}
+                        <div className="contacts-context-menu-item" onClick={e => onContactEditSelected(contextMenuInformation.contactIndex)}>
+                            Edit Contact {contextMenuInformation.contact.firstName + " " + contextMenuInformation.contact.lastName}
                         </div>
-                        <div className="contacts-context-menu-item" onClick={e => onContactRemoved(contextMenuInformation.contactIndex)}>
-                            Remove Contact {contextMenuInformation.contact.firstname + " " + contextMenuInformation.lastname}
+                        <div className="contacts-context-menu-item" onClick={e => onContactRemoveSelected(contextMenuInformation.contactIndex)}>
+                            Remove Contact {contextMenuInformation.contact.firstName + " " + contextMenuInformation.lastName}
                         </div>
                     </div>
                 )

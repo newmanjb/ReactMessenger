@@ -33,6 +33,15 @@
     background: #3f4847;
 }
 
+.contact-dialog {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.contact-dialog-widget {
+    padding-top: 5px;
+}
+
 .conversation-container {
     display: flex;
     flex-flow: column nowrap;
