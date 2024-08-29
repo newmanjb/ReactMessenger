@@ -4,6 +4,7 @@ export default function ContactsArea({contacts, onContactSelected, onContactRemo
 
     const [showingContextMenu, setShowingContextMenu] = useState(false);
     const [contextMenuInformation, setContextMenuInformation] = useState({x:0,y:0});
+    const [selectedContactIndex, setSelectedContactIndex] = useState(-1);
 
     //Adds a window listener that removes the context menu on left-click.  The effect is only run once as it has an empty dependency array.
     useEffect(() => {
@@ -17,10 +18,11 @@ export default function ContactsArea({contacts, onContactSelected, onContactRemo
         let contact = contacts[i];
         contactRows.push(
 
-            <button className="contacts-button"
+            <button className={selectedContactIndex === i ? "contacts-button-selected" : "contacts-button"}
 
                 key={i}
                 onClick={() => {
+                    setSelectedContactIndex(i);
                     onContactSelected(i)
                 }}
                 onContextMenu={(e) => {
@@ -55,7 +57,7 @@ export default function ContactsArea({contacts, onContactSelected, onContactRemo
                             Edit Contact {contextMenuInformation.contact.firstName + " " + contextMenuInformation.contact.lastName}
                         </div>
                         <div className="contacts-context-menu-item" onClick={e => onContactRemoveSelected(contextMenuInformation.contactIndex)}>
-                            Remove Contact {contextMenuInformation.contact.firstName + " " + contextMenuInformation.lastName}
+                            Remove Contact {contextMenuInformation.contact.firstName + " " + contextMenuInformation.contact.lastName}
                         </div>
                     </div>
                 )
