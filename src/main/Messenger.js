@@ -82,7 +82,9 @@ export default function Messenger() {
                               onContactSelected={onContactSelected}
                               onContactRemoveSelected={onContactRemoveSelected}
                               onContactAddSelected={onContactAddSelected}
-                              onContactEditSelected={onContactEditSelected}/>
+                              onContactEditSelected={onContactEditSelected}
+                              selectedContactIndex={currentConversationIndex}
+                />
             </>
 
             <>
