@@ -119,16 +119,16 @@ const defaultData =
         conversations:
         [
             {
-                history: "J", draftedMessage: "J"
+                id: 1000, history: "J", draftedMessage: "J"
             },
             {
-                history: "B", draftedMessage: "B"
+                id: 1001, history: "B", draftedMessage: "B"
             },
             {
-                history: "C", draftedMessage: "C"
+                id: 1002, history: "C", draftedMessage: "C"
             },
             {
-                history: "A", draftedMessage: "A"
+                id: 1003, history: "A", draftedMessage: "A"
             }
         ]
     }
