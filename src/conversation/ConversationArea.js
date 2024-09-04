@@ -1,18 +1,19 @@
 import OutputArea from "./output/OutputArea";
-import {useState} from "react";
+import {useContext} from "react";
 import InputArea from "./input/InputArea";
+import {SendMessageContext} from "../main/Messenger";
 
 export default function ConversationArea({conversation:conversationDetails}) {
 
 
-    const [conversationHistory, setConversationHistory] = useState(conversationDetails.history);
+    const sendJsonMessage = useContext(SendMessageContext);
 
 
     function onSend() {
-        let newConversation = conversationHistory + "\n" + conversationDetails.draftedMessage;
-        conversationDetails.history = newConversation;
-        conversationDetails.draftedMessage = "";
-        setConversationHistory(newConversation);
+        let newConversation = conversationDetails.history + "\n" + conversationDetails.draftedMessage;
+        //Make sure the drafted message gets wiped
+        let updateMsg = {type : "ConversationUpdate", update : {id:conversationDetails.id, newHistory : newConversation, newDraftedMessage: ""}};
+        sendJsonMessage(updateMsg);
     }
 
     return (
