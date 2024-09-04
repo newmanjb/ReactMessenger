@@ -13,7 +13,7 @@ export const SendMessageContext = createContext(null);
 export default function Messenger() {
 
     //The main data model
-    const [uiData,setUiData] = useState(emptyUIData)
+    const [dataModel,setDataModel] = useState(emptyDataModel)
     //True if the user is editing or adding a contact
     const [showContactDialog, setShowContactDialog] = useState(false);
     //The position of the contact being edited in the contacts list
@@ -38,9 +38,9 @@ export default function Messenger() {
     //Listen for messages from the server
     useEffect(() => {
         if(lastJsonMessage) {
-            let newData = createNewDataFromServerMsg(lastJsonMessage);
-            if(newData) {
-                setUiData(newData);
+            let newDataModel = createNewDataFromServerMsg(lastJsonMessage);
+            if(newDataModel) {
+                updateDataModel(newDataModel);
             }
         }
     }, [lastJsonMessage])
@@ -59,7 +59,6 @@ export default function Messenger() {
                         firstName: entry.contactDetails.firstName,
                         lastName: entry.contactDetails.lastName
                     });
-                    contactIdsToIndices.current.set(entry.id, i);
                 }
 
                 const conversations = [];
@@ -70,7 +69,6 @@ export default function Messenger() {
                         history: entry.conversationDetails.history,
                         draftedMessage: entry.conversationDetails.draftedMessage
                     })
-                    conversationIdsToIndices.current.set(entry.id, i);
                 }
                 return {
                     contacts: contacts,
@@ -79,16 +77,34 @@ export default function Messenger() {
             }
             case "ConversationUpdate" : {
                 let conversationIndex = conversationIdsToIndices.current.get(serverMsg.update.id);
-                let conversation = uiData.conversations[conversationIndex];
+                let conversation = dataModel.conversations[conversationIndex];
                 conversation.history = serverMsg.update.newHistory;
                 conversation.draftedMessage = serverMsg.update.newDraftedMessage;
-                return {...uiData};
+                return {...dataModel};
             }
             default : {
                 console.log("Unknown message type: " + serverMsg)
                 return null;
             }
         }
+    }
+
+    //Rebuilds all structures associated with the data model and sets the new model to the UI, triggering a re-render
+    function updateDataModel(newDataModel) {
+        conversationIdsToIndices.current.clear();
+        contactIdsToIndices.current.clear();
+
+        for(let i = 0; i < newDataModel.conversations.length; i++) {
+            let id = newDataModel.conversations[i].id;
+            conversationIdsToIndices.current.set(id, i);
+        }
+
+        for(let i = 0; i < newDataModel.contacts.length; i++) {
+            let id = newDataModel.contacts[i].id;
+            contactIdsToIndices.current.set(id, i);
+        }
+
+        setDataModel(newDataModel);
     }
 
     function onContactSelected(index) {
@@ -98,10 +114,10 @@ export default function Messenger() {
     function onContactRemoveSelected(index) {
         var newCurrentConversationIndex = index === currentConversationIndex ? -1 : (index < currentConversationIndex ? currentConversationIndex - 1 : currentConversationIndex);
         setCurrentConversationIndex(newCurrentConversationIndex);
-        let newContacts = uiData.contacts.toSpliced(index, 1);
-        let newConversations = uiData.conversations.toSpliced(index, 1);
-        let newData = {...uiData, contacts: newContacts, conversations: newConversations};
-        setUiData(newData);
+        let newContacts = dataModel.contacts.toSpliced(index, 1);
+        let newConversations = dataModel.conversations.toSpliced(index, 1);
+        let newDataModel = {...dataModel, contacts: newContacts, conversations: newConversations};
+        updateDataModel(newDataModel);
     }
 
     function onContactAddSelected() {
@@ -114,22 +130,22 @@ export default function Messenger() {
     }
 
     function onContactDialogCommit({firstName, lastName}) {
-        let contacts = uiData.contacts;
+        let contacts = dataModel.contacts;
         if(editingContactIndex.current > -1) {
             var contactId = contacts[editingContactIndex.current].id;
             contacts[editingContactIndex.current] = {id: contactId, firstName : firstName, lastName : lastName};
             editingContactIndex.current = -1;
         }
         else {
-            let conversations = uiData.conversations;
+            let conversations = dataModel.conversations;
             let newConversationId = ++nextConversationId.current;
             let newContactId = ++nextContactId.current;
             conversations.push({id : newConversationId, history: "", draftedMessage: ""});
             contacts.push({id : newContactId, firstName : firstName, lastName : lastName});
         }
 
-        let newData =  {conversations : uiData.conversations, contacts: contacts};
-        setUiData(newData);
+        let newDataModel =  {conversations : dataModel.conversations, contacts: contacts};
+        updateDataModel(newDataModel);
 
         setShowContactDialog(false);
     }
@@ -148,15 +164,15 @@ export default function Messenger() {
                 <ContactDialog
                     onCancelContactDialog={() => onContactDialogCancel()}
                     onCommitContactDialog={onContactDialogCommit}
-                    firstName={editingContactIndex.current > -1 ? uiData.contacts[editingContactIndex.current].firstName : ""}
-                    lastName={editingContactIndex.current > -1 ? uiData.contacts[editingContactIndex.current].lastName : ""}
+                    firstName={editingContactIndex.current > -1 ? dataModel.contacts[editingContactIndex.current].firstName : ""}
+                    lastName={editingContactIndex.current > -1 ? dataModel.contacts[editingContactIndex.current].lastName : ""}
                 >
                 </ContactDialog>)
             }
 
 
             <>
-                <ContactsArea contacts={uiData.contacts}
+                <ContactsArea contacts={dataModel.contacts}
                               onContactSelected={onContactSelected}
                               onContactRemoveSelected={onContactRemoveSelected}
                               onContactAddSelected={onContactAddSelected}
@@ -169,7 +185,7 @@ export default function Messenger() {
                 <SendMessageContext.Provider value={sendJsonMessage}>
                 {
                         currentConversationIndex > -1 ?
-                            <ConversationArea key={uiData.conversations[currentConversationIndex]} conversation={uiData.conversations[currentConversationIndex]}/>
+                            <ConversationArea key={dataModel.conversations[currentConversationIndex]} conversation={dataModel.conversations[currentConversationIndex]}/>
                             : <EmptyConversationArea/>
                 }
                 </SendMessageContext.Provider>
@@ -180,7 +196,7 @@ export default function Messenger() {
     );
 }
 
-const emptyUIData =
+const emptyDataModel =
     {
         contacts:
             [],
