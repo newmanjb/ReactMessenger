@@ -26,27 +26,27 @@ export default function Messenger() {
     const contactIdsToIndices = useRef(new Map());
     const conversationIdsToIndices = useRef(new Map());
 
-    const socketUrl = 'ws://127.0.0.1:8080';
+    const socketUrl = 'ws://127.0.0.1:8080/websocket';
     const { sendJsonMessage, lastJsonMessage } = useWebSocket(socketUrl);
 
     //The effect below gets the initial set of data from the server.  From then on it's maintained in the UI and not
     //updated on the server.  The next stage will be to have all updates in the UI sent to the server first, and for the server
     // to then publish those updates and the UI to update itself based on these.
     useEffect(() => {
-        sendJsonMessage({type: "RequestFullSnapshot"})
+        sendJsonMessage("type=RequestFullSnapshot payload=");
     }, [sendJsonMessage]);
     //Listen for messages from the server
     useEffect(() => {
         if(lastJsonMessage) {
-            let newDataModel = createNewDataFromServerMsg(lastJsonMessage);
+            let newDataModel = handleServerMsg(lastJsonMessage);
             if(newDataModel) {
                 updateDataModel(newDataModel);
             }
         }
     }, [lastJsonMessage])
-
-    //Logs an error and returns null if the message is invalid
-    function createNewDataFromServerMsg(serverMsg) {
+    
+    //Logs an error and returns null if the message is invalid.
+    function handleServerMsg(serverMsg) {
         switch(serverMsg.type) {
             //Build new ui data from scratch
             case "FullSnapshot" : {
@@ -76,10 +76,10 @@ export default function Messenger() {
                 }
             }
             case "ConversationUpdate" : {
-                let conversationIndex = conversationIdsToIndices.current.get(serverMsg.update.id);
+                let conversationIndex = conversationIdsToIndices.current.get(serverMsg.conversation.id);
                 let conversation = dataModel.conversations[conversationIndex];
-                conversation.history = serverMsg.update.newHistory;
-                conversation.draftedMessage = serverMsg.update.newDraftedMessage;
+                conversation.history = serverMsg.conversation.conversationDetails.history;
+                conversation.draftedMessage = serverMsg.conversation.conversationDetails.draftedMessage;
                 return {...dataModel};
             }
             default : {
@@ -140,7 +140,7 @@ export default function Messenger() {
             let conversations = dataModel.conversations;
             let newConversationId = ++nextConversationId.current;
             let newContactId = ++nextContactId.current;
-            conversations.push({id : newConversationId, history: "", draftedMessage: ""});
+            conversations.push({id : newConversationId, history: [], draftedMessage: ""});
             contacts.push({id : newContactId, firstName : firstName, lastName : lastName});
         }
 

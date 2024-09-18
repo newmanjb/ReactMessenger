@@ -3,26 +3,27 @@ import {useContext} from "react";
 import InputArea from "./input/InputArea";
 import {SendMessageContext} from "../main/Messenger";
 
-export default function ConversationArea({conversation:conversationDetails}) {
+export default function ConversationArea({conversation:conversation}) {
 
 
     const sendJsonMessage = useContext(SendMessageContext);
 
 
     function onSend() {
-        let newConversation = conversationDetails.history + "\n" + conversationDetails.draftedMessage;
-        //Make sure the drafted message gets wiped
-        let updateMsg = {type : "ConversationUpdate", update : {id:conversationDetails.id, newHistory : newConversation, newDraftedMessage: ""}};
+        let newConversation = [...conversation.history];
+        newConversation.push({text : conversation.draftedMessage});
+        //The drafted message has been sent, so it should now be empty
+        let updateMsg = "type=ConversationUpdate " + JSON.stringify( {id: conversation.id, conversationDetails: {history : newConversation, draftedMessage:''}});
         sendJsonMessage(updateMsg);
     }
 
     return (
         <div className="conversation-container">
             <div>
-                <OutputArea outputText={conversationDetails.history}/>
+                <OutputArea conversationHistory={conversation.history}/>
             </div>
             <div>
-                <InputArea conversation={conversationDetails} onSend={onSend}/>
+                <InputArea conversation={conversation} onSend={onSend}/>
             </div>
         </div>
     );
