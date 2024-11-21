@@ -33,7 +33,8 @@ export default function Messenger() {
     //updated on the server.  The next stage will be to have all updates in the UI sent to the server first, and for the server
     // to then publish those updates and the UI to update itself based on these.
     useEffect(() => {
-        sendJsonMessage("type=RequestFullSnapshot payload=");
+        const loginRequest = {type:"LoginRequest", from:"", payload:{username:"newmanjb",password:"clements@123"}};
+        sendJsonMessage(JSON.stringify(loginRequest));        
     }, [sendJsonMessage]);
     //Listen for messages from the server
     useEffect(() => {
